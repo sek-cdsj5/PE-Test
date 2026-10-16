@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>體育科網上測驗：五年級 & 六年級</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            background: #f0f7f0;
+            color: #1e3c1e;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0, 40, 0, 0.1);
+            padding: 30px 35px;
+            border: 1px solid #c8e6c9;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #1b5e20;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            border-bottom: 3px dashed #81c784;
+            padding-bottom: 15px;
+        }
+        .subhead {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #2e7d32;
+            margin-bottom: 30px;
+            font-weight: 500;
+            background: #e8f5e9;
+            display: inline-block;
+            padding: 6px 24px;
+            border-radius: 40px;
+            margin-left: auto;
+            margin-right: auto;
+            display: table;
+        }
+        /* 年級選擇畫面 */
+        .grade-selector {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .grade-selector h2 {
+            font-size: 1.8rem;
+            color: #1b5e20;
+            margin-bottom: 30px;
+        }
+        .grade-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .grade-btn {
+            background: #e8f5e9;
+            border: 3px solid #2e7d32;
+            border-radius: 30px;
+            padding: 30px 50px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1b5e20;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 6px 0 #1b5e20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 200px;
+        }
+        .grade-btn:hover {
+            background: #c8e6c9;
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #1b5e20;
+        }
+        .grade-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #1b5e20;
+        }
+        .grade-btn .emoji {
+            font-size: 3rem;
+        }
+        /* 隱藏試卷 */
+        .grade-section {
+            display: none;
+            margin-bottom: 50px;
+            border-left: 6px solid #2e7d32;
+            padding-left: 20px;
+        }
+        .grade-section.active {
+            display: block;
+        }
+        .grade-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .grade-title span {
+            background: #2e7d32;
+            color: white;
+            font-size: 1.2rem;
+            padding: 4px 14px;
+            border-radius: 30px;
+        }
+        .question-block {
+            margin-bottom: 35px;
+            background: #f9fff9;
+            border-radius: 16px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 8px rgba(0, 60, 0, 0.05);
+            border: 1px solid #d0e8d0;
+        }
+        .q-type {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #1b5e20;
+            margin-bottom: 16px;
+            background: #c8e6c9;
+            display: inline-block;
+            padding: 4px 18px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+        }
+        .question-item {
+            margin-bottom: 18px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+        .question-item:hover {
+            background: #ecf9ec;
+        }
+        .q-text {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px 30px;
+            margin-left: 12px;
+            margin-top: 6px;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-weight: 400;
+        }
+        .truefalse {
+            display: flex;
+            gap: 30px;
+            margin-left: 12px;
+            margin-top: 6px;
+        }
+        .truefalse label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .fill-item {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+            margin-left: 8px;
+        }
+        .fill-item label {
+            font-weight: 500;
+            min-width: 200px;
+        }
+        .fill-item input[type="text"] {
+            padding: 8px 12px;
+            border: 2px solid #a5d6a7;
+            border-radius: 10px;
+            font-size: 1rem;
+            width: 180px;
+            background: white;
+            transition: 0.2s;
+        }
+        .fill-item input[type="text"]:focus {
+            border-color: #2e7d32;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+        }
+        .scenario-block {
+            background: #e8f5e9;
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 18px;
+            border-left: 6px solid #2e7d32;
+        }
+        .scenario-text {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+        .scenario-sub {
+            margin-left: 16px;
+            margin-bottom: 12px;
+        }
+        .scenario-sub p {
+            margin: 4px 0;
+            font-weight: 500;
+        }
+        .scenario-sub textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #a5d6a7;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+            background: white;
+            margin-top: 6px;
+        }
+        .scenario-sub textarea:focus {
+            border-color: #2e7d32;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 35px 0 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 38px;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn-check {
+            background: #1b5e20;
+            color: white;
+        }
+        .btn-check:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+        }
+        .btn-reset {
+            background: #f1f8e9;
+            color: #1b5e20;
+            border: 2px solid #2e7d32;
+        }
+        .btn-reset:hover {
+            background: #dcedc8;
+            transform: translateY(-2px);
+        }
+        .btn-back {
+            background: #fff3e0;
+            color: #b26a00;
+            border: 2px solid #ffb74d;
+        }
+        .btn-back:hover {
+            background: #ffe0b2;
+            transform: translateY(-2px);
+        }
+        .result-badge {
+            display: inline-block;
+            margin-left: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 3px 12px;
+            border-radius: 30px;
+        }
+        .correct {
+            background: #a5d6a7;
+            color: #1b5e20;
+        }
+        .wrong {
+            background: #ffcdd2;
+            color: #b71c1c;
+        }
+        .info-note {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4e6b4e;
+            margin-top: 30px;
+            border-top: 1px solid #c8e6c9;
+            padding-top: 20px;
+            font-style: italic;
+        }
+        .score-area {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1b5e20;
+            margin: 10px 0 20px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 50px;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .toolbar .current-grade {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1b5e20;
+            background: #c8e6c9;
+            padding: 8px 24px;
+            border-radius: 30px;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 18px; }
+            .options { flex-direction: column; gap: 8px; }
+            .fill-item { flex-direction: column; align-items: flex-start; }
+            .fill-item input[type="text"] { width: 100%; }
+            .grade-btn { padding: 20px 30px; font-size: 1.4rem; min-width: 160px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🏃 體育科網上測驗 🏀</h1>
+    <div class="subhead">田徑 · 籃球 · 足球 · 排球 · 手球</div>
+
+    <!-- ========== 年級選擇畫面 ========== -->
+    <div id="gradeSelector" class="grade-selector">
+        <h2>請先選擇你的年級</h2>
+        <div class="grade-buttons">
+            <button class="grade-btn" data-grade="5">
+                <span class="emoji">🏃‍♂️</span>
+                五年級
+            </button>
+            <button class="grade-btn" data-grade="6">
+                <span class="emoji">🏃‍♀️</span>
+                六年級
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== 測驗畫面 ========== -->
+    <div id="quizArea" style="display: none;">
+        <div class="toolbar">
+            <div class="current-grade" id="currentGradeLabel"></div>
+            <button class="btn btn-back" id="backBtn">🔙 重新選擇年級</button>
+        </div>
+
+        <!-- 五年級試卷 -->
+        <div class="grade-section" id="grade5">
+            <div class="grade-title"><span>五年級</span> 試卷</div>
+
+            <!-- 選擇題 -->
+            <div class="question-block">
+                <div class="q-type">一、選擇題（每題2分，共10分）</div>
+                <div class="question-item" data-q="5-1">
+                    <div class="q-text">1. 排球比賽中，下列哪種情況不算犯規？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q5-1" value="A"> A) 同一球員連續觸球兩次</label>
+                        <label><input type="radio" name="q5-1" value="B"> B) 發球時踩到底線</label>
+                        <label><input type="radio" name="q5-1" value="C"> C) 攔網時觸碰到對方未過網的球</label>
+                        <label><input type="radio" name="q5-1" value="D"> D) 自由球員在前排跳起扣球</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="5-2">
+                    <div class="q-text">2. 手球比賽中，若防守球員在禁區內犯規，裁判會如何判罰？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q5-2" value="A"> A) 自由球</label>
+                        <label><input type="radio" name="q5-2" value="B"> B) 七米球</label>
+                        <label><input type="radio" name="q5-2" value="C"> C) 黃牌警告</label>
+                        <label><input type="radio" name="q5-2" value="D"> D) 直接紅牌</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="5-3">
+                    <div class="q-text">3. 籃球比賽中，「快攻」戰術的主要目的是什麼？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q5-3" value="A"> A) 消耗比賽時間</label>
+                        <label><input type="radio" name="q5-3" value="B"> B) 趁對方防守未穩時快速得分</label>
+                        <label><input type="radio" name="q5-3" value="C"> C) 讓主力球員休息</label>
+                        <label><input type="radio" name="q5-3" value="D"> D) 練習傳球技巧</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="5-4">
+                    <div class="q-text">4. 足球比賽中，「越位」規則的主要目的是什麼？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q5-4" value="A"> A) 防止守門員犯規</label>
+                        <label><input type="radio" name="q5-4" value="B"> B) 避免進攻方球員偷跑佔便宜</label>
+                        <label><input type="radio" name="q5-4" value="C"> C) 增加比賽進球數</label>
+                        <label><input type="radio" name="q5-4" value="D"> D) 讓裁判更容易判罰</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="5-5">
+                    <div class="q-text">5. 田徑4×100公尺接力賽中，哪一棒的選手通常負責衝刺最後一段？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q5-5" value="A"> A) 第一棒</label>
+                        <label><input type="radio" name="q5-5" value="B"> B) 第二棒</label>
+                        <label><input type="radio" name="q5-5" value="C"> C) 第三棒</label>
+                        <label><input type="radio" name="q5-5" value="D"> D) 第四棒</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 是非題 -->
+            <div class="question-block">
+                <div class="q-type">二、是非題（每題2分，共10分）</div>
+                <div class="question-item" data-q="5-t1">
+                    <div class="q-text">1. 排球比賽中，球員可以用腳踢球救球，不算犯規。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q5-t1" value="T"> 是</label>
+                        <label><input type="radio" name="q5-t1" value="F"> 否</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="5-t2">
+                    <div class="q-text">2. 手球比賽中，守門員可以離開球門區參與進攻。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q5-t2" value="T"> 是</label>
+                        <label><input type="radio" name="q5-t2" value="F"> 否</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="5-t3">
+                    <div class="q-text">3. 籃球比賽中，若進攻方在禁區停留超過3秒，會被判「三秒違例」。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q5-t3" value="T"> 是</label>
+                        <label><input type="radio" name="q5-t3" value="F"> 否</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="5-t4">
+                    <div class="q-text">4. 足球比賽中，罰「間接自由球」時，必須經過第二人觸球才能射門得分。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q5-t4" value="T"> 是</label>
+                        <label><input type="radio" name="q5-t4" value="F"> 否</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="5-t5">
+                    <div class="q-text">5. 田徑跳遠比賽中，選手可以從起跳線後任何位置起跳，只要不踩線。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q5-t5" value="T"> 是</label>
+                        <label><input type="radio" name="q5-t5" value="F"> 否</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 填充題 -->
+            <div class="question-block">
+                <div class="q-type">三、填充題（每題2分，共20分）</div>
+                <div class="fill-item" data-q="5-f1">
+                    <label>1. 排球比賽中，每隊最多可連續觸球</label>
+                    <input type="text" name="q5-f1" placeholder="填數字"> 次（不含攔網）。
+                </div>
+                <div class="fill-item" data-q="5-f2">
+                    <label>2. 手球比賽中，持球後最多可走</label>
+                    <input type="text" name="q5-f2" placeholder="填數字"> 步，否則算「走步違例」。
+                </div>
+                <div class="fill-item" data-q="5-f3">
+                    <label>3. 籃球比賽中，若防守球員在對方投籃時犯規，且球未進，進攻方可獲得</label>
+                    <input type="text" name="q5-f3" placeholder="填數字"> 次罰球。
+                </div>
+                <div class="fill-item" data-q="5-f4">
+                    <label>4. 足球比賽中，若球員在禁區內故意手球阻擋進球，裁判會判罰</label>
+                    <input type="text" name="q5-f4" placeholder="填答案（如：點球）"> 。
+                </div>
+                <div class="fill-item" data-q="5-f5">
+                    <label>5. 田徑接力賽中，接棒區的長度為</label>
+                    <input type="text" name="q5-f5" placeholder="填數字"> 公尺。
+                </div>
+                <div class="fill-item" data-q="5-f6">
+                    <label>6. 排球「自由球員」的主要任務是</label>
+                    <input type="text" name="q5-f6" placeholder="填答案（防守/進攻/發球）"> 。
+                </div>
+                <div class="fill-item" data-q="5-f7">
+                    <label>7. 手球比賽中，罰「七米球」時，守門員必須站在</label>
+                    <input type="text" name="q5-f7" placeholder="填答案（如：七米線）"> 線後。
+                </div>
+                <div class="fill-item" data-q="5-f8">
+                    <label>8. 籃球比賽中，「區域聯防」戰術的主要目的是</label>
+                    <input type="text" name="q5-f8" placeholder="填答案（如：保護禁區）"> 。
+                </div>
+                <div class="fill-item" data-q="5-f9">
+                    <label>9. 足球比賽中，「4-4-2」陣型中的「2」指的是</label>
+                    <input type="text" name="q5-f9" placeholder="填答案（後衛/中場/前鋒）"> 。
+                </div>
+                <div class="fill-item" data-q="5-f10">
+                    <label>10. 田徑中長跑（如800公尺）的關鍵策略是</label>
+                    <input type="text" name="q5-f10" placeholder="填答案（如：配速）"> 。
+                </div>
+            </div>
+
+            <!-- 情景分析題 -->
+            <div class="question-block">
+                <div class="q-type">四、情景分析題（每題10分，共30分）</div>
+                <div class="scenario-block" data-q="5-s1">
+                    <div class="scenario-text">1. 籃球比賽中，A隊快攻時，B隊的防守球員故意在禁區外拉人犯規，阻止A隊得分。請問：</div>
+                    <div class="scenario-sub">
+                        <p>• 裁判應如何判罰？</p>
+                        <textarea name="q5-s1a" rows="2" placeholder="請輸入答案..."></textarea>
+                        <p>• 這種犯規屬於戰術犯規嗎？為什麼？</p>
+                        <textarea name="q5-s1b" rows="2" placeholder="請輸入答案..."></textarea>
+                    </div>
+                </div>
+                <div class="scenario-block" data-q="5-s2">
+                    <div class="scenario-text">2. 排球比賽中，甲隊發球，乙隊接球後連續觸球3次，但第三次觸球時球未過網。請問：</div>
+                    <div class="scenario-sub">
+                        <p>• 這球應該如何判決？</p>
+                        <textarea name="q5-s2a" rows="2" placeholder="請輸入答案..."></textarea>
+                        <p>• 如果第三次觸球的是自由球員，是否有不同判決？</p>
+                        <textarea name="q5-s2b" rows="2" placeholder="請輸入答案..."></textarea>
+                    </div>
+                </div>
+                <div class="scenario-block" data-q="5-s3">
+                    <div class="scenario-text">3. 足球比賽中，進攻方球員A傳球給隊友B時，B處於越位位置但未觸球，而防守方球員C不慎將球碰進自家球門。請問：</div>
+                    <div class="scenario-sub">
+                        <p>• 這個進球是否有效？為什麼？</p>
+                        <textarea name="q5-s3a" rows="2" placeholder="請輸入答案..."></textarea>
+                        <p>• 如果B觸球後射門得分，判決會不同嗎？</p>
+                        <textarea name="q5-s3b" rows="2" placeholder="請輸入答案..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 六年級試卷 -->
+        <div class="grade-section" id="grade6">
+            <div class="grade-title"><span>六年級</span> 試卷</div>
+
+            <!-- 選擇題 -->
+            <div class="question-block">
+                <div class="q-type">一、選擇題（每題2分，共10分）</div>
+                <div class="question-item" data-q="6-1">
+                    <div class="q-text">1. 排球比賽中，「舉球員」的主要職責是什麼？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q6-1" value="A"> A) 負責扣殺得分</label>
+                        <label><input type="radio" name="q6-1" value="B"> B) 組織進攻並傳球給攻擊手</label>
+                        <label><input type="radio" name="q6-1" value="C"> C) 專職防守接球</label>
+                        <label><input type="radio" name="q6-1" value="D"> D) 只在後排發球</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="6-2">
+                    <div class="q-text">2. 手球比賽中，若球員在快攻時被對方故意拉倒，裁判可能如何判罰？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q6-2" value="A"> A) 自由球</label>
+                        <label><input type="radio" name="q6-2" value="B"> B) 七米球＋黃牌</label>
+                        <label><input type="radio" name="q6-2" value="C"> C) 直接紅牌</label>
+                        <label><input type="radio" name="q6-2" value="D"> D) 僅口頭警告</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="6-3">
+                    <div class="q-text">3. 籃球比賽中，「擋拆戰術」（Pick and Roll）的主要目的是什麼？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q6-3" value="A"> A) 讓射手有更多空檔投籃</label>
+                        <label><input type="radio" name="q6-3" value="B"> B) 製造錯位防守機會</label>
+                        <label><input type="radio" name="q6-3" value="C"> C) 拖延比賽時間</label>
+                        <label><input type="radio" name="q6-3" value="D"> D) 練習基本傳球</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="6-4">
+                    <div class="q-text">4. 足球比賽中，「VAR（視頻助理裁判）」主要用於審查哪些情況？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q6-4" value="A"> A) 球員體能數據</label>
+                        <label><input type="radio" name="q6-4" value="B"> B) 爭議性進球或犯規</label>
+                        <label><input type="radio" name="q6-4" value="C"> C) 球迷行為</label>
+                        <label><input type="radio" name="q6-4" value="D"> D) 教練戰術佈置</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="6-5">
+                    <div class="q-text">5. 田徑4×400公尺接力賽中，哪一棒的選手通常負責最後衝刺？</div>
+                    <div class="options">
+                        <label><input type="radio" name="q6-5" value="A"> A) 第一棒</label>
+                        <label><input type="radio" name="q6-5" value="B"> B) 第二棒</label>
+                        <label><input type="radio" name="q6-5" value="C"> C) 第三棒</label>
+                        <label><input type="radio" name="q6-5" value="D"> D) 第四棒</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 是非題 -->
+            <div class="question-block">
+                <div class="q-type">二、是非題（每題2分，共10分）</div>
+                <div class="question-item" data-q="6-t1">
+                    <div class="q-text">1. 排球比賽中，攔網觸球不算在球隊的三次觸球內。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q6-t1" value="T"> 是</label>
+                        <label><input type="radio" name="q6-t1" value="F"> 否</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="6-t2">
+                    <div class="q-text">2. 手球比賽中，守門員可以像普通球員一樣參與全場進攻。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q6-t2" value="T"> 是</label>
+                        <label><input type="radio" name="q6-t2" value="F"> 否</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="6-t3">
+                    <div class="q-text">3. 籃球比賽中，若進攻方在24秒內未出手，會被判「24秒違例」。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q6-t3" value="T"> 是</label>
+                        <label><input type="radio" name="q6-t3" value="F"> 否</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="6-t4">
+                    <div class="q-text">4. 足球比賽中，「間接自由球」必須經過兩名球員觸球才能射門得分。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q6-t4" value="T"> 是</label>
+                        <label><input type="radio" name="q6-t4" value="F"> 否</label>
+                    </div>
+                </div>
+                <div class="question-item" data-q="6-t5">
+                    <div class="q-text">5. 田徑跳高比賽中，選手可以選擇任何一種跳躍方式（如背越式、剪刀式）。</div>
+                    <div class="truefalse">
+                        <label><input type="radio" name="q6-t5" value="T"> 是</label>
+                        <label><input type="radio" name="q6-t5" value="F"> 否</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 填充題 -->
+            <div class="question-block">
+                <div class="q-type">三、填充題（每題2分，共20分）</div>
+                <div class="fill-item" data-q="6-f1">
+                    <label>1. 排球比賽中，每局先得</label>
+                    <input type="text" name="q6-f1" placeholder="填數字"> 分且領先2分者勝（正式比賽）。
+                </div>
+                <div class="fill-item" data-q="6-f2">
+                    <label>2. 手球比賽中，球員持球後必須在</label>
+                    <input type="text" name="q6-f2" placeholder="填數字"> 秒內傳球或射門。
+                </div>
+                <div class="fill-item" data-q="6-f3">
+                    <label>3. 籃球比賽中，若進攻方在後場超過</label>
+                    <input type="text" name="q6-f3" placeholder="填數字"> 秒未過半場，算「8秒違例」。
+                </div>
+                <div class="fill-item" data-q="6-f4">
+                    <label>4. 足球比賽中，「黃金入球」（突然死亡法）是指</label>
+                    <input type="text" name="q6-f4" placeholder="填答案"> 。
+                </div>
+                <div class="fill-item" data-q="6-f5">
+                    <label>5. 田徑跨欄比賽中，若選手故意推倒欄架，會被</label>
+                    <input type="text" name="q6-f5" placeholder="填答案（如：取消資格）"> 。
+                </div>
+                <div class="fill-item" data-q="6-f6">
+                    <label>6. 排球「自由球員」不得</label>
+                    <input type="text" name="q6-f6" placeholder="填答案（如：扣球）"> 。
+                </div>
+                <div class="fill-item" data-q="6-f7">
+                    <label>7. 手球比賽中，罰「七米球」時，其他球員必須站在</label>
+                    <input type="text" name="q6-f7" placeholder="填答案（如：九米線）"> 線外。
+                </div>
+                <div class="fill-item" data-q="6-f8">
+                    <label>8. 籃球「全場緊逼」防守戰術的主要目的是</label>
+                    <input type="text" name="q6-f8" placeholder="填答案（如：迫使失誤）"> 。
+                </div>
+                <div class="fill-item" data-q="6-f9">
+                    <label>9. 足球「4-3-3」陣型中的「3」中場通常負責</label>
+                    <input type="text" name="q6-f9" placeholder="填答案（如：控球）"> 。
+                </div>
+                <div class="fill-item" data-q="6-f10">
+                    <label>10. 田徑馬拉松比賽中，「配速」的重要性在於</label>
+                    <input type="text" name="q6-f10" placeholder="填答案（如：保持體力）"> 。
+                </div>
+            </div>
+
+            <!-- 情景分析題 -->
+            <div class="question-block">
+                <div class="q-type">四、情景分析題（每題10分，共30分）</div>
+                <div class="scenario-block" data-q="6-s1">
+                    <div class="scenario-text">1. 籃球比賽最後10秒，A隊領先1分，B隊採取全場緊逼防守。A隊後衛運球時被雙人包夾，無法傳球。請問：</div>
+                    <div class="scenario-sub">
+                        <p>• A隊可以如何破解緊逼防守？</p>
+                        <textarea name="q6-s1a" rows="2" placeholder="請輸入答案..."></textarea>
+                        <p>• 若B隊成功抄截並快攻得分，A隊還有反擊機會嗎？</p>
+                        <textarea name="q6-s1b" rows="2" placeholder="請輸入答案..."></textarea>
+                    </div>
+                </div>
+                <div class="scenario-block" data-q="6-s2">
+                    <div class="scenario-text">2. 排球比賽決勝局（第五局），甲隊發球，乙隊接球後自由球員意外用腳救球，球仍過網並得分。請問：</div>
+                    <div class="scenario-sub">
+                        <p>• 這分是否算有效？依據是什麼？</p>
+                        <textarea name="q6-s2a" rows="2" placeholder="請輸入答案..."></textarea>
+                        <p>• 自由球員在什麼情況下可以用腳觸球？</p>
+                        <textarea name="q6-s2b" rows="2" placeholder="請輸入答案..."></textarea>
+                    </div>
+                </div>
+                <div class="scenario-block" data-q="6-s3">
+                    <div class="scenario-text">3. 足球比賽中，進攻方球員A在越位位置但未參與進攻，隊友B射門後，球擊中門柱反彈到A腳下，A補射進球。請問：</div>
+                    <div class="scenario-sub">
+                        <p>• 這個進球是否有效？為什麼？</p>
+                        <textarea name="q6-s3a" rows="2" placeholder="請輸入答案..."></textarea>
+                        <p>• 如果裁判認為A「干擾比賽」，判決會如何改變？</p>
+                        <textarea name="q6-s3b" rows="2" placeholder="請輸入答案..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 按鈕與分數 -->
+        <div class="btn-group">
+            <button class="btn btn-check" id="checkBtn">✅ 提交並評分</button>
+            <button class="btn btn-reset" id="resetBtn">🔄 重新作答</button>
+        </div>
+        <div id="scoreDisplay" class="score-area"></div>
+        <div class="info-note">選擇題、是非題、填充題由系統自動評分；情景分析題請自行對照參考答案。</div>
+    </div>
+</div>
+
+<script>
+    // ========== 年級切換邏輯 ==========
+    const gradeSelector = document.getElementById('gradeSelector');
+    const quizArea = document.getElementById('quizArea');
+    const grade5Section = document.getElementById('grade5');
+    const grade6Section = document.getElementById('grade6');
+    const currentGradeLabel = document.getElementById('currentGradeLabel');
+
+    let currentGrade = null;
+
+    function showGrade(grade) {
+        currentGrade = grade;
+        // 隱藏選擇畫面，顯示測驗畫面
+        gradeSelector.style.display = 'none';
+        quizArea.style.display = 'block';
+
+        // 顯示對應年級試卷
+        if (grade === 5) {
+            grade5Section.classList.add('active');
+            grade6Section.classList.remove('active');
+            currentGradeLabel.textContent = '📘 五年級試卷';
+        } else if (grade === 6) {
+            grade6Section.classList.add('active');
+            grade5Section.classList.remove('active');
+            currentGradeLabel.textContent = '📗 六年級試卷';
+        }
+
+        // 清除之前的評分結果
+        resetAll();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function backToSelector() {
+        // 隱藏測驗畫面，顯示選擇畫面
+        quizArea.style.display = 'none';
+        gradeSelector.style.display = 'block';
+        grade5Section.classList.remove('active');
+        grade6Section.classList.remove('active');
+        currentGrade = null;
+        currentGradeLabel.textContent = '';
+        resetAll();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 綁定年級按鈕
+    document.querySelectorAll('.grade-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const grade = parseInt(btn.dataset.grade);
+            showGrade(grade);
+        });
+    });
+
+    // 返回按鈕
+    document.getElementById('backBtn').addEventListener('click', backToSelector);
+
+    // ========== 答案設定 ==========
+    const answers = {
+        // 五年級
+        'q5-1': 'C', 'q5-2': 'B', 'q5-3': 'B', 'q5-4': 'B', 'q5-5': 'D',
+        'q5-t1': 'T', 'q5-t2': 'F', 'q5-t3': 'T', 'q5-t4': 'T', 'q5-t5': 'F',
+        'q5-f1': '3', 'q5-f2': '3', 'q5-f3': '2', 'q5-f4': '點球', 'q5-f5': '20',
+        'q5-f6': '防守', 'q5-f7': '七米線', 'q5-f8': '保護禁區', 'q5-f9': '前鋒', 'q5-f10': '配速',
+        // 六年級
+        'q6-1': 'B', 'q6-2': 'B', 'q6-3': 'B', 'q6-4': 'B', 'q6-5': 'D',
+        'q6-t1': 'T', 'q6-t2': 'F', 'q6-t3': 'T', 'q6-t4': 'T', 'q6-t5': 'T',
+        'q6-f1': '25', 'q6-f2': '3', 'q6-f3': '8', 'q6-f4': '加時賽中先得分者勝', 'q6-f5': '取消資格',
+        'q6-f6': '扣球', 'q6-f7': '九米線', 'q6-f8': '迫使對方失誤', 'q6-f9': '控球', 'q6-f10': '保持體力'
+    };
+
+    // 填充題關鍵詞匹配
+    function checkFillAnswer(userAns, correctAns) {
+        if (!userAns) return false;
+        const ua = userAns.trim().toLowerCase();
+        const ca = correctAns.toLowerCase();
+        if (ca === '3' || ca === '2' || ca === '20' || ca === '25' || ca === '8') {
+            return ua === ca;
+        }
+        if (ua.includes(ca) || ca.includes(ua)) return true;
+        if (ca === '點球' && (ua.includes('十二碼') || ua.includes('點球') || ua.includes('罰球點'))) return true;
+        if (ca === '七米線' && (ua.includes('七米') || ua.includes('7米'))) return true;
+        if (ca === '九米線' && (ua.includes('九米') || ua.includes('9米'))) return true;
+        if (ca === '取消資格' && (ua.includes('取消') || ua.includes('紅牌') || ua.includes('犯規'))) return true;
+        if (ca === '防守' && (ua.includes('防守') || ua.includes('接球') || ua.includes('救球'))) return true;
+        if (ca === '前鋒' && (ua.includes('前鋒') || ua.includes('攻擊'))) return true;
+        if (ca === '配速' && (ua.includes('配速') || ua.includes('速度') || ua.includes('節奏'))) return true;
+        if (ca === '保護禁區' && (ua.includes('禁區') || ua.includes('防守') || ua.includes('聯防'))) return true;
+        if (ca === '迫使對方失誤' && (ua.includes('失誤') || ua.includes('壓迫') || ua.includes('抄截'))) return true;
+        if (ca === '保持體力' && (ua.includes('體力') || ua.includes('節省') || ua.includes('配速'))) return true;
+        if (ca === '加時賽中先得分者勝' && (ua.includes('先得分') || ua.includes('突然死亡') || ua.includes('黃金'))) return true;
+        return false;
+    }
+
+    // ========== 評分邏輯 ==========
+    function checkAnswers() {
+        if (!currentGrade) {
+            alert('請先選擇年級！');
+            return;
+        }
+
+        let totalCorrect = 0;
+        let totalQuestions = 0;
+
+        // 選擇題 & 是非題
+        for (let key in answers) {
+            // 跳過填充題和情景分析
+            if (key.includes('-f') || key.includes('-s')) continue;
+            // 確認是否為當前年級的題目
+            const prefix = currentGrade === 5 ? 'q5-' : 'q6-';
+            if (!key.startsWith(prefix)) continue;
+
+            const radios = document.getElementsByName(key);
+            if (!radios.length) continue;
+            let selected = null;
+            for (let r of radios) if (r.checked) selected = r.value;
+            totalQuestions++;
+            if (selected === answers[key]) totalCorrect++;
+
+            // 標記
+            const parent = radios[0]?.closest('.question-item');
+            if (parent) {
+                const oldBadge = parent.querySelector('.result-badge');
+                if (oldBadge) oldBadge.remove();
+                const badge = document.createElement('span');
+                badge.className = 'result-badge ' + (selected === answers[key] ? 'correct' : 'wrong');
+                badge.textContent = selected === answers[key] ? '✓ 正確' : '✗ 錯誤';
+                parent.querySelector('.q-text').appendChild(badge);
+            }
+        }
+
+        // 填充題
+        for (let key in answers) {
+            if (!key.includes('-f')) continue;
+            const prefix = currentGrade === 5 ? 'q5-' : 'q6-';
+            if (!key.startsWith(prefix)) continue;
+
+            const input = document.querySelector(`input[name="${key}"]`);
+            if (!input) continue;
+            const userAns = input.value.trim();
+            totalQuestions++;
+            const isCorrect = checkFillAnswer(userAns, answers[key]);
+            if (isCorrect) totalCorrect++;
+
+            const parent = input.closest('.fill-item');
+            if (parent) {
+                const oldBadge = parent.querySelector('.result-badge');
+                if (oldBadge) oldBadge.remove();
+                const badge = document.createElement('span');
+                badge.className = 'result-badge ' + (isCorrect ? 'correct' : 'wrong');
+                badge.textContent = isCorrect ? '✓ 正確' : `✗ 參考答案: ${answers[key]}`;
+                parent.appendChild(badge);
+            }
+        }
+
+        // 情景分析題提示（只針對當前年級）
+        const prefix = currentGrade === 5 ? '5-s' : '6-s';
+        document.querySelectorAll('.scenario-block').forEach(block => {
+            if (!block.dataset.q || !block.dataset.q.startsWith(prefix)) return;
+            const oldBadge = block.querySelector('.result-badge');
+            if (oldBadge) oldBadge.remove();
+            const badge = document.createElement('span');
+            badge.className = 'result-badge';
+            badge.style.background = '#fff3e0';
+            badge.style.color = '#b26a00';
+            badge.textContent = 'ℹ️ 請自行對照參考答案';
+            block.querySelector('.scenario-text').appendChild(badge);
+        });
+
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const totalScore = totalCorrect * 2;
+        const maxScore = totalQuestions * 2;
+        scoreDisplay.textContent = `📊 自動評分部分：${totalCorrect} / ${totalQuestions} 題正確 ｜ 得分：${totalScore} / ${maxScore} 分`;
+    }
+
+    // ========== 重置 ==========
+    function resetAll() {
+        // 只清除當前顯示的年級試卷（但為簡便，全部清除）
+        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
+        document.querySelectorAll('textarea').forEach(t => t.value = '');
+        document.querySelectorAll('.result-badge').forEach(b => b.remove());
+        document.getElementById('scoreDisplay').textContent = '';
+    }
+
+    // 綁定按鈕
+    document.getElementById('checkBtn').addEventListener('click', checkAnswers);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+</script>
+</body>
+</html>
